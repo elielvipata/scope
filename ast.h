@@ -113,3 +113,42 @@ static std::unique_ptr<ExprAST> ParseParenExpr(){
     getNextToken();
     return V;
 }
+
+// Handle variable references
+// identifierexpr
+// ::=identifier
+// ::= identifier '('expression *')'
+static std::unique_ptr<ExprAST> ParseIdentifierExpr(){
+    std::string IdName = IdentifierStr;
+    getNextToken();
+    if(CurTok != '(') {  // simple variable ref
+        return std::make_unique<VariableExprAst>(IdName);
+    }
+
+    // call
+    getNextToken();
+    std::vector<std::unique_ptr<ExprAST>> Args;
+    if(CurTok != ')'){
+        while(1){
+            if(auto Arg = ParseExpression())
+                Args.push_back(std::move(Arg));
+            else{
+                return nullptr;
+            }
+            
+            if(CurTok == ')'){
+                break;
+            }
+
+            if(CurTok != ','){
+                return LogError("Expected ')' or ',' in argument");
+            }
+
+            getNextToken();
+
+        }
+    }
+
+    getNextToken();
+    return std::make_unique<CallExprAST>(IdName, std::move(Args));
+}
