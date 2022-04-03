@@ -16,4 +16,4 @@ enum Token{
 
 static std::string IdentifierStr;   // Filled in if tok_identifier
 static double NumVal;               // Filled in if tok_number
-
+static int gettok();

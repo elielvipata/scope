@@ -59,5 +59,4 @@ static int gettok(){
         int ThisChar = LastChar;
         LastChar = getchar();
         return ThisChar;
-
 }
